@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>대구 인구구성 통계</title>
-  <meta name="description" content="대구광역시 및 각 구·군의 20세 이상 인구구성 통계 페이지" />
+  <title>대구 인구구성 통계 · popu2</title>
+  <meta name="description" content="대구광역시 및 각 구·군의 20세 이상 인구 구성 통계 페이지" />
   <style>
     :root {
       --bg: #0b1020;
@@ -41,7 +41,7 @@
 
     a { color: inherit; text-decoration: none; }
     .page {
-      width: min(calc(100% - 32px), var(--max));
+      width: min(calc(100% - 24px), var(--max));
       margin: 0 auto;
       padding: 28px 0 64px;
     }
@@ -85,9 +85,10 @@
 
     h1 {
       margin: 0;
-      font-size: clamp(32px, 5vw, 56px);
-      line-height: 1.05;
+      font-size: clamp(24px, 3.8vw, 42px);
+      line-height: 1.12;
       letter-spacing: -0.03em;
+      word-break: keep-all;
     }
 
     .hero p {
@@ -174,6 +175,9 @@
     }
 
     .district-card {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
       border: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(15,23,42,0.92), rgba(11,16,32,0.92));
       border-radius: var(--radius-xl);
@@ -205,7 +209,7 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(92px, 1fr));
       gap: 12px;
-      min-width: min(100%, 360px);
+      min-width: min(100%, 420px);
     }
 
     .kpi {
@@ -226,6 +230,14 @@
     .kpi strong {
       font-size: clamp(18px, 2vw, 24px);
       letter-spacing: -0.02em;
+      display: block;
+    }
+
+    .kpi small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
     }
 
     .ratio-bar {
@@ -251,7 +263,10 @@
     }
 
     .table-shell {
-      overflow: auto;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      overflow-y: visible;
       border-radius: 22px;
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.03);
@@ -259,7 +274,8 @@
 
     table {
       width: 100%;
-      min-width: 620px;
+      min-width: 0;
+      table-layout: fixed;
       border-collapse: collapse;
     }
 
@@ -285,6 +301,7 @@
       padding: 14px 18px;
       border-bottom: 1px solid rgba(255,255,255,0.07);
       font-size: 15px;
+      vertical-align: top;
     }
 
     tbody td {
@@ -310,8 +327,27 @@
       font-weight: 800;
     }
 
+    .cell-primary {
+      display: block;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .cell-secondary {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .legend {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
     .footer-note {
-      margin-top: 18px;
+      margin-top: 22px;
       text-align: center;
       color: var(--muted);
       font-size: 13px;
@@ -336,6 +372,7 @@
       .kpi-wrap {
         min-width: 0;
         width: 100%;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .district-card {
@@ -344,1349 +381,258 @@
       }
 
       .page {
-        width: min(calc(100% - 20px), var(--max));
+        width: min(calc(100% - 16px), var(--max));
         padding-top: 16px;
+        padding-bottom: 110px;
       }
     }
 
     @media (max-width: 640px) {
-      .quick-nav {
-        margin: 18px 0 22px;
+      .hero {
+        padding: 18px;
       }
-      .nav-pill {
-        padding: 10px 14px;
+      h1 {
+        font-size: 26px;
+        line-height: 1.18;
+      }
+      .hero p {
         font-size: 13px;
       }
+      .quick-nav {
+        margin: 18px 0 22px;
+        top: 10px;
+        padding: 8px;
+      }
+      .nav-pill {
+        padding: 9px 12px;
+        font-size: 12px;
+      }
       table {
-        min-width: 560px;
+        min-width: 0;
       }
       tbody th, tbody td, thead th {
-        padding: 12px 14px;
-        font-size: 14px;
+        padding: 10px 8px;
+        font-size: 12px;
+        word-break: keep-all;
+      }
+      .stat-box {
+        padding: 16px;
+        min-height: auto;
+      }
+      .stat-box strong {
+        font-size: 24px;
+      }
+      .district-head h2 {
+        font-size: 22px;
+      }
+      .ratio-caption {
+        gap: 8px;
+        flex-direction: column;
       }
     }
-  </style>
+  
+    @media (max-width: 640px) {
+      .kpi-wrap {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .kpi {
+        padding: 12px 10px;
+      }
+      .kpi strong {
+        font-size: 18px;
+      }
+      .kpi small, .cell-secondary {
+        font-size: 11px;
+      }
+      .cell-primary {
+        font-size: 12px;
+      }
+    }
+</style>
 </head>
 <body>
   <main class="page">
     <header class="hero">
       <div class="hero-grid">
         <div>
-          <p class="eyebrow">더불어민주당 대구광역시당</p>
-          <h1>대구 인구구성 통계</h1>
+          <p class="eyebrow">DAEGU POPULATION DASHBOARD</p>
+          <h1>대구시 인구분포별 숫자 · 퍼센테이지</h1>
           <p>
-                모든 표의 합계는 <strong>20세 이상 인구 기준</strong>으로 계산,
-            <strong>0~9세, 10~19세</strong>는 제외되었습니다. 
+            모든 계산은 <strong>0~19세를 제외한 20세 이상 인구</strong>만을 기준으로 했습니다.
+            퍼센테이지 보기에서는 <strong>각 시군구의 20세 이상 총인구</strong>를 분모로 사용합니다.
           </p>
         </div>
-        <div class="hero-stats">
-          <div class="stat-box">
-            <span>대구광역시 20세 이상 총인구</span>
-            <strong>1,997,986</strong>
-          </div>
-          <div class="stat-box">
-            <span>남성</span>
-            <strong>969,741</strong>
-          </div>
-          <div class="stat-box">
-            <span>여성</span>
-            <strong>1,028,245</strong>
-          </div>
-        </div>
+        <div class="hero-stats" id="heroStats"></div>
       </div>
     </header>
 
     <nav class="quick-nav" aria-label="구군 바로가기">
-      <div class="nav-track">
-        <a class="nav-pill" href="#sec-0">대구광역시 전체</a><a class="nav-pill" href="#sec-1">중구</a><a class="nav-pill" href="#sec-2">동구</a><a class="nav-pill" href="#sec-3">서구</a><a class="nav-pill" href="#sec-4">남구</a><a class="nav-pill" href="#sec-5">북구</a><a class="nav-pill" href="#sec-6">수성구</a><a class="nav-pill" href="#sec-7">달서구</a><a class="nav-pill" href="#sec-8">달성군</a><a class="nav-pill" href="#sec-9">군위군</a>
-      </div>
+      <div class="nav-track" id="quickNav"></div>
     </nav>
 
-    <div class="sections">
-      
-    <section class="district-card" id="sec-0">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>대구광역시 전체</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>1,997,986</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>969,741</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>1,028,245</strong>
-          </div>
-        </div>
-      </div>
+    <div class="sections" id="sections"></div>
 
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:48.54%"></span>
-        <span class="ratio-female" style="width:51.46%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 48.5%</span>
-        <span>여성 51.5%</span>
-      </div>
+    <p class="footer-note">
+      기준 파일: 인구.xlsx · 20세 이상 기준 집계
+    </p>
 
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">대구광역시 전체</th>
-        <td>1,997,986</td>
-        <td>969,741</td>
-        <td>1,028,245</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>250,653</td>
-          <td>131,436</td>
-          <td>119,217</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>283,618</td>
-          <td>151,013</td>
-          <td>132,605</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>332,666</td>
-          <td>166,020</td>
-          <td>166,646</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>409,499</td>
-          <td>199,386</td>
-          <td>210,113</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>379,136</td>
-          <td>181,044</td>
-          <td>198,092</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>225,121</td>
-          <td>99,696</td>
-          <td>125,425</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>100,920</td>
-          <td>37,075</td>
-          <td>63,845</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>16,088</td>
-          <td>4,028</td>
-          <td>12,060</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>285</td>
-          <td>43</td>
-          <td>242</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-1">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>중구</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>84,871</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>40,087</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>44,784</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:47.23%"></span>
-        <span class="ratio-female" style="width:52.77%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 47.2%</span>
-        <span>여성 52.8%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">중구</th>
-        <td>84,871</td>
-        <td>40,087</td>
-        <td>44,784</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>13,439</td>
-          <td>6,101</td>
-          <td>7,338</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>18,155</td>
-          <td>9,183</td>
-          <td>8,972</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>14,883</td>
-          <td>7,638</td>
-          <td>7,245</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>14,064</td>
-          <td>6,814</td>
-          <td>7,250</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>11,351</td>
-          <td>5,290</td>
-          <td>6,061</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>8,060</td>
-          <td>3,315</td>
-          <td>4,745</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>4,210</td>
-          <td>1,551</td>
-          <td>2,659</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>692</td>
-          <td>192</td>
-          <td>500</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>17</td>
-          <td>3</td>
-          <td>14</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-2">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>동구</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>292,763</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>141,584</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>151,179</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:48.36%"></span>
-        <span class="ratio-female" style="width:51.64%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 48.4%</span>
-        <span>여성 51.6%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">동구</th>
-        <td>292,763</td>
-        <td>141,584</td>
-        <td>151,179</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>33,587</td>
-          <td>17,538</td>
-          <td>16,049</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>43,972</td>
-          <td>23,479</td>
-          <td>20,493</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>46,118</td>
-          <td>23,587</td>
-          <td>22,531</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>55,617</td>
-          <td>27,339</td>
-          <td>28,278</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>56,261</td>
-          <td>26,212</td>
-          <td>30,049</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>37,464</td>
-          <td>16,375</td>
-          <td>21,089</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>17,133</td>
-          <td>6,386</td>
-          <td>10,747</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>2,569</td>
-          <td>663</td>
-          <td>1,906</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>42</td>
-          <td>5</td>
-          <td>37</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-3">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>서구</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>146,656</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>72,262</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>74,394</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:49.27%"></span>
-        <span class="ratio-female" style="width:50.73%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 49.3%</span>
-        <span>여성 50.7%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">서구</th>
-        <td>146,656</td>
-        <td>72,262</td>
-        <td>74,394</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>14,505</td>
-          <td>7,706</td>
-          <td>6,799</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>19,560</td>
-          <td>10,950</td>
-          <td>8,610</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>19,372</td>
-          <td>10,424</td>
-          <td>8,948</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>28,399</td>
-          <td>14,420</td>
-          <td>13,979</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>33,404</td>
-          <td>16,083</td>
-          <td>17,321</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>21,106</td>
-          <td>9,125</td>
-          <td>11,981</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>9,053</td>
-          <td>3,283</td>
-          <td>5,770</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>1,234</td>
-          <td>270</td>
-          <td>964</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>23</td>
-          <td>1</td>
-          <td>22</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-4">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>남구</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>123,289</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>58,094</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>65,195</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:47.12%"></span>
-        <span class="ratio-female" style="width:52.88%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 47.1%</span>
-        <span>여성 52.9%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">남구</th>
-        <td>123,289</td>
-        <td>58,094</td>
-        <td>65,195</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>15,992</td>
-          <td>7,623</td>
-          <td>8,369</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>17,066</td>
-          <td>9,174</td>
-          <td>7,892</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>16,698</td>
-          <td>8,409</td>
-          <td>8,289</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>22,567</td>
-          <td>11,160</td>
-          <td>11,407</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>23,702</td>
-          <td>10,885</td>
-          <td>12,817</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>17,196</td>
-          <td>7,356</td>
-          <td>9,840</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>8,578</td>
-          <td>3,098</td>
-          <td>5,480</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>1,461</td>
-          <td>385</td>
-          <td>1,076</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>29</td>
-          <td>4</td>
-          <td>25</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-5">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>북구</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>348,190</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>170,983</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>177,207</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:49.11%"></span>
-        <span class="ratio-female" style="width:50.89%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 49.1%</span>
-        <span>여성 50.9%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">북구</th>
-        <td>348,190</td>
-        <td>170,983</td>
-        <td>177,207</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>50,018</td>
-          <td>26,775</td>
-          <td>23,243</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>47,831</td>
-          <td>25,835</td>
-          <td>21,996</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>56,194</td>
-          <td>28,070</td>
-          <td>28,124</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>76,059</td>
-          <td>37,182</td>
-          <td>38,877</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>64,474</td>
-          <td>31,293</td>
-          <td>33,181</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>35,192</td>
-          <td>15,527</td>
-          <td>19,665</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>15,977</td>
-          <td>5,722</td>
-          <td>10,255</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>2,396</td>
-          <td>572</td>
-          <td>1,824</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>49</td>
-          <td>7</td>
-          <td>42</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-6">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>수성구</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>336,273</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>158,690</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>177,583</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:47.19%"></span>
-        <span class="ratio-female" style="width:52.81%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 47.2%</span>
-        <span>여성 52.8%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">수성구</th>
-        <td>336,273</td>
-        <td>158,690</td>
-        <td>177,583</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>42,290</td>
-          <td>22,439</td>
-          <td>19,851</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>42,440</td>
-          <td>21,400</td>
-          <td>21,040</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>62,823</td>
-          <td>29,330</td>
-          <td>33,493</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>73,781</td>
-          <td>34,627</td>
-          <td>39,154</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>59,299</td>
-          <td>27,896</td>
-          <td>31,403</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>35,771</td>
-          <td>15,720</td>
-          <td>20,051</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>16,817</td>
-          <td>6,414</td>
-          <td>10,403</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>3,001</td>
-          <td>857</td>
-          <td>2,144</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>51</td>
-          <td>7</td>
-          <td>44</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-7">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>달서구</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>438,767</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>212,899</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>225,868</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:48.52%"></span>
-        <span class="ratio-female" style="width:51.48%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 48.5%</span>
-        <span>여성 51.5%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">달서구</th>
-        <td>438,767</td>
-        <td>212,899</td>
-        <td>225,868</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>57,944</td>
-          <td>30,378</td>
-          <td>27,566</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>60,793</td>
-          <td>32,734</td>
-          <td>28,059</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>71,517</td>
-          <td>35,211</td>
-          <td>36,306</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>94,165</td>
-          <td>44,983</td>
-          <td>49,182</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>86,529</td>
-          <td>41,225</td>
-          <td>45,304</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>46,172</td>
-          <td>20,787</td>
-          <td>25,385</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>18,711</td>
-          <td>6,874</td>
-          <td>11,837</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>2,891</td>
-          <td>695</td>
-          <td>2,196</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>45</td>
-          <td>12</td>
-          <td>33</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-8">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>달성군</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>205,907</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>104,101</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>101,806</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:50.56%"></span>
-        <span class="ratio-female" style="width:49.44%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 50.6%</span>
-        <span>여성 49.4%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">달성군</th>
-        <td>205,907</td>
-        <td>104,101</td>
-        <td>101,806</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>21,956</td>
-          <td>12,333</td>
-          <td>9,623</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>32,669</td>
-          <td>17,577</td>
-          <td>15,092</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>43,436</td>
-          <td>22,422</td>
-          <td>21,014</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>41,341</td>
-          <td>20,857</td>
-          <td>20,484</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>37,821</td>
-          <td>18,677</td>
-          <td>19,144</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>19,598</td>
-          <td>9,193</td>
-          <td>10,405</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>7,760</td>
-          <td>2,769</td>
-          <td>4,991</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>1,301</td>
-          <td>269</td>
-          <td>1,032</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>25</td>
-          <td>4</td>
-          <td>21</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    <section class="district-card" id="sec-9">
-      <div class="district-head">
-        <div>
-          <p class="eyebrow">DAEGU POPULATION</p>
-          <h2>군위군</h2>
-          <p class="muted">20세 이상 인구 기준 · 0~9세, 10~19세 제외 집계</p>
-        </div>
-        <div class="kpi-wrap">
-          <div class="kpi">
-            <span class="kpi-label">총</span>
-            <strong>21,270</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">남</span>
-            <strong>11,041</strong>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">여</span>
-            <strong>10,229</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="ratio-bar" aria-hidden="true">
-        <span class="ratio-male" style="width:51.91%"></span>
-        <span class="ratio-female" style="width:48.09%"></span>
-      </div>
-      <div class="ratio-caption">
-        <span>남성 51.9%</span>
-        <span>여성 48.1%</span>
-      </div>
-
-      <div class="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>총</th>
-              <th>남</th>
-              <th>여</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      <tr class="total-row">
-        <th scope="row">군위군</th>
-        <td>21,270</td>
-        <td>11,041</td>
-        <td>10,229</td>
-      </tr>
-    
-
-        <tr>
-          <th scope="row">20~29세</th>
-          <td>922</td>
-          <td>543</td>
-          <td>379</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">30~39세</th>
-          <td>1,132</td>
-          <td>681</td>
-          <td>451</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">40~49세</th>
-          <td>1,625</td>
-          <td>929</td>
-          <td>696</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">50~59세</th>
-          <td>3,506</td>
-          <td>2,004</td>
-          <td>1,502</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">60~69세</th>
-          <td>6,295</td>
-          <td>3,483</td>
-          <td>2,812</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">70~79세</th>
-          <td>4,562</td>
-          <td>2,298</td>
-          <td>2,264</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">80~89세</th>
-          <td>2,681</td>
-          <td>978</td>
-          <td>1,703</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">90~99세</th>
-          <td>543</td>
-          <td>125</td>
-          <td>418</td>
-        </tr>
-        
-
-        <tr>
-          <th scope="row">100세 이상</th>
-          <td>4</td>
-          <td>0</td>
-          <td>4</td>
-        </tr>
-        
-          </tbody>
-        </table>
-      </div>
-    </section>
-    
-    </div>
-
-    <p class="footer-note">더불어민주당 대구광역시당</p>
   </main>
+
+  <script>
+    const populationData = [{"code": "2700000000", "name": "대구광역시 전체", "total20plus": 1997986, "male20plus": 969741, "female20plus": 1028245, "ages": [{"label": "20~29세", "total": 250653, "male": 131436, "female": 119217}, {"label": "30~39세", "total": 283618, "male": 151013, "female": 132605}, {"label": "40~49세", "total": 332666, "male": 166020, "female": 166646}, {"label": "50~59세", "total": 409499, "male": 199386, "female": 210113}, {"label": "60~69세", "total": 379136, "male": 181044, "female": 198092}, {"label": "70~79세", "total": 225121, "male": 99696, "female": 125425}, {"label": "80~89세", "total": 100920, "male": 37075, "female": 63845}, {"label": "90~99세", "total": 16088, "male": 4028, "female": 12060}, {"label": "100세 이상", "total": 285, "male": 43, "female": 242}]}, {"code": "2711000000", "name": "중구", "total20plus": 84871, "male20plus": 40087, "female20plus": 44784, "ages": [{"label": "20~29세", "total": 13439, "male": 6101, "female": 7338}, {"label": "30~39세", "total": 18155, "male": 9183, "female": 8972}, {"label": "40~49세", "total": 14883, "male": 7638, "female": 7245}, {"label": "50~59세", "total": 14064, "male": 6814, "female": 7250}, {"label": "60~69세", "total": 11351, "male": 5290, "female": 6061}, {"label": "70~79세", "total": 8060, "male": 3315, "female": 4745}, {"label": "80~89세", "total": 4210, "male": 1551, "female": 2659}, {"label": "90~99세", "total": 692, "male": 192, "female": 500}, {"label": "100세 이상", "total": 17, "male": 3, "female": 14}]}, {"code": "2714000000", "name": "동구", "total20plus": 292763, "male20plus": 141584, "female20plus": 151179, "ages": [{"label": "20~29세", "total": 33587, "male": 17538, "female": 16049}, {"label": "30~39세", "total": 43972, "male": 23479, "female": 20493}, {"label": "40~49세", "total": 46118, "male": 23587, "female": 22531}, {"label": "50~59세", "total": 55617, "male": 27339, "female": 28278}, {"label": "60~69세", "total": 56261, "male": 26212, "female": 30049}, {"label": "70~79세", "total": 37464, "male": 16375, "female": 21089}, {"label": "80~89세", "total": 17133, "male": 6386, "female": 10747}, {"label": "90~99세", "total": 2569, "male": 663, "female": 1906}, {"label": "100세 이상", "total": 42, "male": 5, "female": 37}]}, {"code": "2717000000", "name": "서구", "total20plus": 146656, "male20plus": 72262, "female20plus": 74394, "ages": [{"label": "20~29세", "total": 14505, "male": 7706, "female": 6799}, {"label": "30~39세", "total": 19560, "male": 10950, "female": 8610}, {"label": "40~49세", "total": 19372, "male": 10424, "female": 8948}, {"label": "50~59세", "total": 28399, "male": 14420, "female": 13979}, {"label": "60~69세", "total": 33404, "male": 16083, "female": 17321}, {"label": "70~79세", "total": 21106, "male": 9125, "female": 11981}, {"label": "80~89세", "total": 9053, "male": 3283, "female": 5770}, {"label": "90~99세", "total": 1234, "male": 270, "female": 964}, {"label": "100세 이상", "total": 23, "male": 1, "female": 22}]}, {"code": "2720000000", "name": "남구", "total20plus": 123289, "male20plus": 58094, "female20plus": 65195, "ages": [{"label": "20~29세", "total": 15992, "male": 7623, "female": 8369}, {"label": "30~39세", "total": 17066, "male": 9174, "female": 7892}, {"label": "40~49세", "total": 16698, "male": 8409, "female": 8289}, {"label": "50~59세", "total": 22567, "male": 11160, "female": 11407}, {"label": "60~69세", "total": 23702, "male": 10885, "female": 12817}, {"label": "70~79세", "total": 17196, "male": 7356, "female": 9840}, {"label": "80~89세", "total": 8578, "male": 3098, "female": 5480}, {"label": "90~99세", "total": 1461, "male": 385, "female": 1076}, {"label": "100세 이상", "total": 29, "male": 4, "female": 25}]}, {"code": "2723000000", "name": "북구", "total20plus": 348190, "male20plus": 170983, "female20plus": 177207, "ages": [{"label": "20~29세", "total": 50018, "male": 26775, "female": 23243}, {"label": "30~39세", "total": 47831, "male": 25835, "female": 21996}, {"label": "40~49세", "total": 56194, "male": 28070, "female": 28124}, {"label": "50~59세", "total": 76059, "male": 37182, "female": 38877}, {"label": "60~69세", "total": 64474, "male": 31293, "female": 33181}, {"label": "70~79세", "total": 35192, "male": 15527, "female": 19665}, {"label": "80~89세", "total": 15977, "male": 5722, "female": 10255}, {"label": "90~99세", "total": 2396, "male": 572, "female": 1824}, {"label": "100세 이상", "total": 49, "male": 7, "female": 42}]}, {"code": "2726000000", "name": "수성구", "total20plus": 336273, "male20plus": 158690, "female20plus": 177583, "ages": [{"label": "20~29세", "total": 42290, "male": 22439, "female": 19851}, {"label": "30~39세", "total": 42440, "male": 21400, "female": 21040}, {"label": "40~49세", "total": 62823, "male": 29330, "female": 33493}, {"label": "50~59세", "total": 73781, "male": 34627, "female": 39154}, {"label": "60~69세", "total": 59299, "male": 27896, "female": 31403}, {"label": "70~79세", "total": 35771, "male": 15720, "female": 20051}, {"label": "80~89세", "total": 16817, "male": 6414, "female": 10403}, {"label": "90~99세", "total": 3001, "male": 857, "female": 2144}, {"label": "100세 이상", "total": 51, "male": 7, "female": 44}]}, {"code": "2729000000", "name": "달서구", "total20plus": 438767, "male20plus": 212899, "female20plus": 225868, "ages": [{"label": "20~29세", "total": 57944, "male": 30378, "female": 27566}, {"label": "30~39세", "total": 60793, "male": 32734, "female": 28059}, {"label": "40~49세", "total": 71517, "male": 35211, "female": 36306}, {"label": "50~59세", "total": 94165, "male": 44983, "female": 49182}, {"label": "60~69세", "total": 86529, "male": 41225, "female": 45304}, {"label": "70~79세", "total": 46172, "male": 20787, "female": 25385}, {"label": "80~89세", "total": 18711, "male": 6874, "female": 11837}, {"label": "90~99세", "total": 2891, "male": 695, "female": 2196}, {"label": "100세 이상", "total": 45, "male": 12, "female": 33}]}, {"code": "2771000000", "name": "달성군", "total20plus": 205907, "male20plus": 104101, "female20plus": 101806, "ages": [{"label": "20~29세", "total": 21956, "male": 12333, "female": 9623}, {"label": "30~39세", "total": 32669, "male": 17577, "female": 15092}, {"label": "40~49세", "total": 43436, "male": 22422, "female": 21014}, {"label": "50~59세", "total": 41341, "male": 20857, "female": 20484}, {"label": "60~69세", "total": 37821, "male": 18677, "female": 19144}, {"label": "70~79세", "total": 19598, "male": 9193, "female": 10405}, {"label": "80~89세", "total": 7760, "male": 2769, "female": 4991}, {"label": "90~99세", "total": 1301, "male": 269, "female": 1032}, {"label": "100세 이상", "total": 25, "male": 4, "female": 21}]}, {"code": "2772000000", "name": "군위군", "total20plus": 21270, "male20plus": 11041, "female20plus": 10229, "ages": [{"label": "20~29세", "total": 922, "male": 543, "female": 379}, {"label": "30~39세", "total": 1132, "male": 681, "female": 451}, {"label": "40~49세", "total": 1625, "male": 929, "female": 696}, {"label": "50~59세", "total": 3506, "male": 2004, "female": 1502}, {"label": "60~69세", "total": 6295, "male": 3483, "female": 2812}, {"label": "70~79세", "total": 4562, "male": 2298, "female": 2264}, {"label": "80~89세", "total": 2681, "male": 978, "female": 1703}, {"label": "90~99세", "total": 543, "male": 125, "female": 418}, {"label": "100세 이상", "total": 4, "male": 0, "female": 4}]}];
+
+    function fmt(num) {
+      return Number(num).toLocaleString('ko-KR');
+    }
+
+    function pct(part, whole) {
+      if (!whole) return '0.00';
+      return ((part / whole) * 100).toFixed(2);
+    }
+
+    function heroStat(title, primary, secondary='') {
+      return `
+        <div class="stat-box">
+          <span>${title}</span>
+          <strong>${primary}</strong>
+          ${secondary ? `<small style="display:block;margin-top:8px;color:var(--muted);font-size:12px;">${secondary}</small>` : ''}
+        </div>
+      `;
+    }
+
+    function buildHero() {
+      const daegu = populationData[0];
+      const malePct = pct(daegu.male20plus, daegu.total20plus);
+      const femalePct = pct(daegu.female20plus, daegu.total20plus);
+
+      let html = '';
+      html += heroStat('대구광역시 20세 이상 총인구', '100.00%', fmt(daegu.total20plus) + '명');
+      html += heroStat('남성', malePct + '%', fmt(daegu.male20plus) + '명');
+      html += heroStat('여성', femalePct + '%', fmt(daegu.female20plus) + '명');
+      document.getElementById('heroStats').innerHTML = html;
+    }
+
+    function buildQuickNav() {
+      document.getElementById('quickNav').innerHTML = populationData.map((item, index) => `
+        <a class="nav-pill" href="#sec-${index}">${item.name}</a>
+      `).join('');
+    }
+
+    function combinedCell(percentValue, count) {
+      return `
+        <span class="cell-primary">${percentValue}%</span>
+        <span class="cell-secondary">${fmt(count)}명</span>
+      `;
+    }
+
+    function combinedTableRows(item) {
+      const totalMalePct = pct(item.male20plus, item.total20plus);
+      const totalFemalePct = pct(item.female20plus, item.total20plus);
+
+      const totalRow = `
+        <tr class="total-row">
+          <th scope="row">${item.name}</th>
+          <td>${combinedCell('100.00', item.total20plus)}</td>
+          <td>${combinedCell(totalMalePct, item.male20plus)}</td>
+          <td>${combinedCell(totalFemalePct, item.female20plus)}</td>
+        </tr>
+      `;
+
+      const ageRows = item.ages.map(age => `
+        <tr>
+          <th scope="row">${age.label}</th>
+          <td>${combinedCell(pct(age.total, item.total20plus), age.total)}</td>
+          <td>${combinedCell(pct(age.male, item.total20plus), age.male)}</td>
+          <td>${combinedCell(pct(age.female, item.total20plus), age.female)}</td>
+        </tr>
+      `).join('');
+
+      return `
+        <table>
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>총</th>
+              <th>남</th>
+              <th>여</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${totalRow}
+            ${ageRows}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function buildSections() {
+      const html = populationData.map((item, index) => {
+        const malePct = pct(item.male20plus, item.total20plus);
+        const femalePct = pct(item.female20plus, item.total20plus);
+
+        const kpiTotalPrimary = '100.00%';
+        const kpiTotalSecondary = fmt(item.total20plus) + '명';
+
+        const kpiMalePrimary = malePct + '%';
+        const kpiMaleSecondary = fmt(item.male20plus) + '명';
+
+        const kpiFemalePrimary = femalePct + '%';
+        const kpiFemaleSecondary = fmt(item.female20plus) + '명';
+
+        const tableHtml = combinedTableRows(item);
+        const legend = '모든 퍼센트는 각 시군구의 20세 이상 총인구를 100% 기준으로 계산했고, 숫자는 실제 인원 수입니다.';
+
+        return `
+          <section class="district-card" id="sec-${index}">
+            <div class="district-head">
+              <div>
+                <p class="eyebrow">DAEGU POPULATION</p>
+                <h2>${item.name}</h2>
+                <p class="muted">20세 이상 인구 기준 · 0~19세 제외</p>
+              </div>
+              <div class="kpi-wrap">
+                <div class="kpi">
+                  <span class="kpi-label">총</span>
+                  <strong>${kpiTotalPrimary}</strong>
+                  <small>${kpiTotalSecondary}</small>
+                </div>
+                <div class="kpi">
+                  <span class="kpi-label">남</span>
+                  <strong>${kpiMalePrimary}</strong>
+                  <small>${kpiMaleSecondary}</small>
+                </div>
+                <div class="kpi">
+                  <span class="kpi-label">여</span>
+                  <strong>${kpiFemalePrimary}</strong>
+                  <small>${kpiFemaleSecondary}</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="ratio-bar" aria-hidden="true">
+              <span class="ratio-male" style="width:${malePct}%"></span>
+              <span class="ratio-female" style="width:${femalePct}%"></span>
+            </div>
+            <div class="ratio-caption">
+              <span>남성 ${malePct}% · ${fmt(item.male20plus)}명</span>
+              <span>여성 ${femalePct}% · ${fmt(item.female20plus)}명</span>
+            </div>
+
+            <div class="table-shell">
+              ${tableHtml}
+            </div>
+
+            <div class="legend">${legend}</div>
+          </section>
+        `;
+      }).join('');
+
+      document.getElementById('sections').innerHTML = html;
+    }
+
+    buildQuickNav();
+    buildHero();
+    buildSections();
+  </script>
 </body>
 </html>
