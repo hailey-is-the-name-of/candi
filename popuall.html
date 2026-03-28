@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>대구 인구구성 통계 · popuall</title>
+  <meta name="description" content="대구광역시 및 각 구·군의 18세 이상 인구 구성 통계 페이지 (거주불명자와 재외국민 포함)" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: rgba(255,255,255,0.06);
+      --panel: rgba(15, 23, 42, 0.76);
+      --panel-strong: rgba(12, 19, 35, 0.92);
+      --line: rgba(255,255,255,0.1);
+      --text: #eef2ff;
+      --muted: #a7b1c7;
+      --accent: #7dd3fc;
+      --accent-2: #c4b5fd;
+      --male: linear-gradient(90deg, #38bdf8, #60a5fa);
+      --female: linear-gradient(90deg, #f0abfc, #c084fc);
+      --shadow: 0 20px 60px rgba(0,0,0,0.28);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --max: 1320px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, "Pretendard", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 28%),
+        radial-gradient(circle at top right, rgba(196, 181, 253, 0.18), transparent 24%),
+        linear-gradient(180deg, #0b1020 0%, #090d18 100%);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    .page {
+      width: min(calc(100% - 24px), var(--max));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(17,24,39,0.88), rgba(15,23,42,0.76));
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(125,211,252,0.35), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 24px;
+      align-items: end;
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 3.4vw, 40px);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      word-break: keep-all;
+    }
+    .hero p {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: clamp(14px, 1.8vw, 17px);
+      max-width: 760px;
+    }
+    .notice-box {
+      margin-top: 18px;
+      border: 1px solid rgba(125,211,252,0.22);
+      background: linear-gradient(135deg, rgba(125,211,252,0.08), rgba(196,181,253,0.07));
+      border-radius: 22px;
+      padding: 16px 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .notice-copy {
+      margin: 0;
+      color: #dbeafe;
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+    .hero-actions {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid transparent;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.1);
+    }
+    .btn-accent {
+      background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(196,181,253,0.18));
+      border-color: rgba(125,211,252,0.32);
+      color: #f8fbff;
+    }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .stat-box {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 18px;
+      min-height: 110px;
+    }
+    .stat-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .stat-box strong {
+      display: block;
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing: -0.02em;
+    }
+    .quick-nav {
+      position: sticky;
+      top: 14px;
+      z-index: 10;
+      margin: 22px 0 28px;
+      border: 1px solid var(--line);
+      background: rgba(11, 16, 32, 0.78);
+      backdrop-filter: blur(16px);
+      border-radius: 999px;
+      padding: 10px;
+      overflow-x: auto;
+      white-space: nowrap;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+      scrollbar-width: none;
+    }
+    .quick-nav::-webkit-scrollbar { display: none; }
+    .nav-track {
+      display: inline-flex;
+      gap: 10px;
+      min-width: 100%;
+    }
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 16px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid transparent;
+      font-size: 14px;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+    .nav-pill:hover {
+      color: var(--text);
+      border-color: rgba(125,211,252,0.28);
+      background: rgba(125,211,252,0.08);
+      transform: translateY(-1px);
+    }
+    .sections {
+      display: grid;
+      gap: 22px;
+    }
+    .district-card {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,23,42,0.92), rgba(11,16,32,0.92));
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .district-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .district-head h2 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      letter-spacing: -0.03em;
+    }
+    .district-actions {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .muted {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .kpi-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(92px, 1fr));
+      gap: 12px;
+      min-width: min(100%, 420px);
+    }
+    .kpi {
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+      border-radius: 18px;
+      padding: 14px 16px;
+      text-align: right;
+    }
+    .kpi-label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .kpi strong {
+      font-size: clamp(18px, 2vw, 24px);
+      letter-spacing: -0.02em;
+      display: block;
+    }
+    .kpi small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .ratio-bar {
+      display: flex;
+      width: 100%;
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 8px;
+    }
+    .ratio-male { background: var(--male); }
+    .ratio-female { background: var(--female); }
+    .ratio-caption {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 18px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .table-shell {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      overflow-y: visible;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+    }
+    table {
+      width: 100%;
+      min-width: 0;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+    table colgroup col:first-child { width: 28%; }
+    table colgroup col:not(:first-child) { width: 24%; }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: rgba(17,24,39,0.96);
+      z-index: 1;
+      color: #dbeafe;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 16px 14px;
+      text-align: right;
+      border-bottom: 1px solid var(--line);
+    }
+    thead th:first-child,
+    tbody th {
+      text-align: left;
+    }
+    tbody th, tbody td {
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 15px;
+      vertical-align: top;
+    }
+    tbody th {
+      word-break: keep-all;
+    }
+    tbody td {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    tbody tr:last-child th,
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+    tbody tr:hover {
+      background: rgba(125,211,252,0.05);
+    }
+    .total-row {
+      background: linear-gradient(90deg, rgba(125,211,252,0.08), rgba(196,181,253,0.08));
+    }
+    .total-row th,
+    .total-row td {
+      font-weight: 800;
+    }
+    .cell-primary {
+      display: block;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .cell-secondary {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .legend {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .footer-note {
+      margin-top: 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,0.72);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 100;
+    }
+    .modal.is-open { display: flex; }
+    .modal-panel {
+      width: min(100%, 720px);
+      max-height: min(92vh, 860px);
+      overflow: auto;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(11,16,32,0.98));
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+    .modal-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .modal-head h3 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 30px);
+      letter-spacing: -0.03em;
+    }
+    .modal-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+      flex: 0 0 auto;
+    }
+    .modal-copy {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .picker-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .picker-btn {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 12px 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+    .picker-btn.active,
+    .picker-btn:hover {
+      border-color: rgba(125,211,252,0.34);
+      background: rgba(125,211,252,0.1);
+      color: #f8fbff;
+    }
+    .form-card {
+      margin-top: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 18px;
+      background: rgba(255,255,255,0.03);
+    }
+    .form-card h4 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .age-input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 14px 14px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+    }
+    .helper {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .search-result {
+      margin-top: 20px;
+      display: none;
+    }
+    .search-result.is-open { display: block; }
+    .result-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,23,42,0.92), rgba(11,16,32,0.92));
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .result-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .result-title h4 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+    .result-sub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .search-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(125,211,252,0.22);
+      background: rgba(125,211,252,0.08);
+      color: #dbeafe;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    @media (max-width: 960px) {
+      .hero-grid, .district-head { grid-template-columns: 1fr; }
+      .hero { padding: 24px; border-radius: 26px; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .kpi-wrap { min-width: 0; width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .district-card { padding: 18px; border-radius: 24px; }
+      .page { width: min(calc(100% - 16px), var(--max)); padding-top: 16px; padding-bottom: 110px; }
+      .picker-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .hero { padding: 18px; }
+      h1 { font-size: 26px; line-height: 1.18; }
+      .hero p, .notice-copy { font-size: 13px; }
+      .quick-nav { margin: 18px 0 22px; top: 10px; padding: 8px; }
+      .nav-pill { padding: 9px 12px; font-size: 12px; }
+      thead th, tbody th, tbody td { padding: 10px 8px; font-size: 12px; }
+      .stat-box { padding: 16px; min-height: auto; }
+      .stat-box strong { font-size: 24px; }
+      .district-head h2 { font-size: 22px; }
+      .ratio-caption { flex-direction: column; }
+      .picker-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .range-row { grid-template-columns: 1fr auto; }
+      .range-row .age-input:last-of-type { grid-column: 1 / 2; }
+      .search-kpis { grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+      table colgroup col:first-child { width: 30%; }
+      table colgroup col:not(:first-child) { width: 23.333%; }
+      .cell-primary { font-size: 11px; }
+      .cell-secondary { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">DAEGU POPULATION DASHBOARD</p>
+          <h1>대구시 인구분포별 숫자 · 퍼센테이지</h1>
+          <p>
+            모든 계산은 <strong>2026년 2월 기준 18세 이상 대구 거주불명자와 재외국민을 포함한 인구</strong>를 기준으로 했습니다.
+            퍼센테이지는 <strong>각 시군구의 18세 이상 해당 인구 총계</strong>를 분모로 사용합니다.
+          </p>
+          <div class="notice-box">
+            <p class="notice-copy">모든 계산은 2026년 2월 기준 18세 이상 대구 거주불명자와 재외국민을 포함한 인구 기준으로 정리되었습니다. 대구 거주자 기준으로 보시려면 아래의 버튼을 클릭해주세요. </p>
+            <div class="hero-actions">
+              <a class="btn btn-accent" href="popu.html">거주자만 포함한 통계</a>
+              <button class="btn" type="button" id="openSearchTop">커스텀 검색하기</button>
+            </div>
+          </div>
+        </div>
+        <div class="hero-stats" id="heroStats"></div>
+      </div>
+    </header>
+
+    <nav class="quick-nav" aria-label="구군 바로가기">
+      <div class="nav-track" id="quickNav"></div>
+    </nav>
+
+    <div class="sections" id="sections"></div>
+
+    <p class="footer-note">
+      집계기준 : 2026년 2월 기준 대구시 전체 인구 통계입니다. 연령 구간은 <strong>18~19세, 20~29세, 30~39세 ... 100세 이상</strong> 기준으로 재구성했습니다.
+    </p>
+  </main>
+
+  <div class="modal" id="searchModal" aria-hidden="true" role="dialog" aria-labelledby="searchModalTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">CUSTOM POPULATION SEARCH</p>
+          <h3 id="searchModalTitle">커스텀 검색하기</h3>
+          <p class="modal-copy">대구 전체 또는 원하는 시군구를 선택한 뒤, 검색할 연령 범위를 입력하면 해당 구간의 인구 통계를 바로 보여준다.</p>
+        </div>
+        <button class="modal-close" type="button" id="closeSearch" aria-label="닫기">✕</button>
+      </div>
+
+      <div>
+        <span class="badge">지역 선택</span>
+        <div class="picker-grid" id="districtPicker"></div>
+      </div>
+
+      <div class="form-card">
+        <h4>검색할 연령대</h4>
+        <div class="range-row">
+          <input class="age-input" type="number" id="ageStart" min="18" max="120" placeholder="18" />
+          <span>세 부터</span>
+          <input class="age-input" type="number" id="ageEnd" min="18" max="120" placeholder="30" />
+          <span>세 까지</span>
+        </div>
+        <div class="helper">입력 가능한 범위는 18세 이상이며, 100세 이상 입력 시에는 자동으로 100세 이상까지 포함해서 계산한다.</div>
+        <div class="hero-actions" style="margin-top:14px;">
+          <button class="btn btn-accent" type="button" id="runSearch">검색하기</button>
+        </div>
+      </div>
+
+      <div class="search-result" id="searchResult"></div>
+    </div>
+  </div>
+
+  <script>
+    const populationData = [{"code": "2700000000", "name": "대구광역시 전체", "total18plus": 2049271, "male18plus": 996640, "female18plus": 1052631, "ages": [{"label": "18~19세", "total": 43956, "male": 22514, "female": 21442}, {"label": "20~29세", "total": 251102, "male": 131711, "female": 119391}, {"label": "30~39세", "total": 284536, "male": 151621, "female": 132915}, {"label": "40~49세", "total": 334323, "male": 167050, "female": 167273}, {"label": "50~59세", "total": 411757, "male": 200810, "female": 210947}, {"label": "60~69세", "total": 380674, "male": 181869, "female": 198805}, {"label": "70~79세", "total": 225477, "male": 99853, "female": 125624}, {"label": "80~89세", "total": 101036, "male": 37132, "female": 63904}, {"label": "90~99세", "total": 16116, "male": 4034, "female": 12082}, {"label": "100세 이상", "total": 294, "male": 46, "female": 248}], "ageTotals": [10815, 10955, 10053, 11027, 11808, 12343, 14320, 15413, 17011, 19412, 20673, 20706, 20316, 22566, 21835, 21830, 20012, 21095, 23003, 20953, 20757, 21764, 23575, 22651, 24807, 28101, 26899, 26181, 28015, 28352, 29869, 29423, 29841, 30746, 29995, 27445, 27880, 26358, 26355, 26624, 27567, 27388, 31448, 35248, 36979, 36837, 37072, 32636, 34432, 34716, 35972, 38843, 40948, 41717, 42982, 42978, 43045, 44081, 41788, 39403, 39652, 39664, 35942, 40851, 41883, 42057, 40367, 33964, 33938, 32356, 31293, 28133, 24203, 26529, 21817, 19498, 20157, 20264, 18654, 14929, 10826, 12949, 12730, 14922, 11784, 9637, 9067, 7489, 6348, 5284, 4368, 3449, 2385, 1936, 1407, 928, 680, 457, 313, 193, 294], "ageMales": [5548, 5581, 5164, 5646, 6087, 6333, 7457, 7899, 8699, 9974, 10554, 10582, 10295, 11563, 11191, 11186, 10320, 10935, 11655, 10859, 10681, 11328, 12339, 11971, 13223, 14845, 14314, 13888, 14450, 14672, 15662, 15666, 15841, 16430, 16050, 14772, 15027, 14171, 13941, 14061, 14433, 14199, 15787, 17346, 18230, 18237, 18306, 16245, 16923, 17344, 17628, 19032, 19810, 20446, 21033, 20905, 20822, 21519, 20090, 19525, 18967, 19113, 17423, 19759, 20118, 19888, 18822, 16272, 16190, 15317, 14101, 13099, 10821, 11615, 9780, 8636, 8952, 8665, 7905, 6279, 4498, 5160, 4759, 5923, 4307, 3326, 3028, 2514, 1993, 1624, 1266, 941, 581, 478, 317, 170, 124, 76, 54, 27, 46], "ageFemales": [5267, 5374, 4889, 5381, 5721, 6010, 6863, 7514, 8312, 9438, 10119, 10124, 10021, 11003, 10644, 10644, 9692, 10160, 11348, 10094, 10076, 10436, 11236, 10680, 11584, 13256, 12585, 12293, 13565, 13680, 14207, 13757, 14000, 14316, 13945, 12673, 12853, 12187, 12414, 12563, 13134, 13189, 15661, 17902, 18749, 18600, 18766, 16391, 17509, 17372, 18344, 19811, 21138, 21271, 21949, 22073, 22223, 22562, 21698, 19878, 20685, 20551, 18519, 21092, 21765, 22169, 21545, 17692, 17748, 17039, 17192, 15034, 13382, 14914, 12037, 10862, 11205, 11599, 10749, 8650, 6328, 7789, 7971, 8999, 7477, 6311, 6039, 4975, 4355, 3660, 3102, 2508, 1804, 1458, 1090, 758, 556, 381, 259, 166, 248]}, {"code": "2711000000", "name": "중구", "total18plus": 86943, "male18plus": 41125, "female18plus": 45818, "ages": [{"label": "18~19세", "total": 1568, "male": 747, "female": 821}, {"label": "20~29세", "total": 13483, "male": 6132, "female": 7351}, {"label": "30~39세", "total": 18213, "male": 9219, "female": 8994}, {"label": "40~49세", "total": 14975, "male": 7700, "female": 7275}, {"label": "50~59세", "total": 14210, "male": 6896, "female": 7314}, {"label": "60~69세", "total": 11468, "male": 5346, "female": 6122}, {"label": "70~79세", "total": 8092, "male": 3331, "female": 4761}, {"label": "80~89세", "total": 4221, "male": 1558, "female": 2663}, {"label": "90~99세", "total": 694, "male": 193, "female": 501}, {"label": "100세 이상", "total": 19, "male": 3, "female": 16}], "ageTotals": [945, 876, 808, 787, 750, 735, 795, 778, 826, 874, 828, 815, 729, 777, 744, 726, 660, 685, 786, 782, 807, 987, 1147, 1170, 1301, 1523, 1567, 1529, 1703, 1749, 1792, 1825, 1988, 2047, 2071, 1873, 1811, 1655, 1596, 1555, 1576, 1507, 1610, 1667, 1623, 1517, 1540, 1265, 1300, 1370, 1298, 1507, 1560, 1533, 1544, 1470, 1444, 1368, 1299, 1187, 1185, 1164, 1087, 1197, 1217, 1215, 1185, 1049, 1115, 1054, 1011, 940, 814, 946, 733, 706, 714, 812, 755, 661, 463, 597, 531, 595, 466, 415, 357, 330, 253, 214, 185, 155, 97, 83, 58, 50, 19, 23, 17, 7, 19], "ageMales": [492, 441, 434, 408, 378, 382, 427, 369, 404, 460, 414, 406, 358, 389, 357, 341, 358, 342, 384, 363, 379, 450, 498, 516, 557, 702, 712, 723, 761, 834, 833, 859, 980, 1009, 1037, 963, 955, 901, 839, 843, 850, 797, 835, 888, 815, 799, 781, 631, 633, 671, 622, 719, 736, 718, 753, 746, 709, 668, 609, 616, 568, 546, 542, 552, 565, 546, 567, 493, 495, 472, 433, 414, 339, 375, 323, 289, 278, 309, 301, 270, 178, 223, 209, 235, 184, 152, 122, 95, 82, 78, 51, 50, 24, 23, 20, 10, 6, 6, 2, 1, 3], "ageFemales": [453, 435, 374, 379, 372, 353, 368, 409, 422, 414, 414, 409, 371, 388, 387, 385, 302, 343, 402, 419, 428, 537, 649, 654, 744, 821, 855, 806, 942, 915, 959, 966, 1008, 1038, 1034, 910, 856, 754, 757, 712, 726, 710, 775, 779, 808, 718, 759, 634, 667, 699, 676, 788, 824, 815, 791, 724, 735, 700, 690, 571, 617, 618, 545, 645, 652, 669, 618, 556, 620, 582, 578, 526, 475, 571, 410, 417, 436, 503, 454, 391, 285, 374, 322, 360, 282, 263, 235, 235, 171, 136, 134, 105, 73, 60, 38, 40, 13, 17, 15, 6, 16]}, {"code": "2714000000", "name": "동구", "total18plus": 299219, "male18plus": 145056, "female18plus": 154163, "ages": [{"label": "18~19세", "total": 5259, "male": 2765, "female": 2494}, {"label": "20~29세", "total": 33646, "male": 17570, "female": 16076}, {"label": "30~39세", "total": 44100, "male": 23562, "female": 20538}, {"label": "40~49세", "total": 46370, "male": 23749, "female": 22621}, {"label": "50~59세", "total": 56024, "male": 27596, "female": 28428}, {"label": "60~69세", "total": 56536, "male": 26353, "female": 30183}, {"label": "70~79세", "total": 37513, "male": 16397, "female": 21116}, {"label": "80~89세", "total": 17155, "male": 6394, "female": 10761}, {"label": "90~99세", "total": 2572, "male": 663, "female": 1909}, {"label": "100세 이상", "total": 44, "male": 7, "female": 37}], "ageTotals": [1717, 1717, 1560, 1648, 1712, 1820, 1920, 2092, 2220, 2484, 2594, 2544, 2444, 2726, 2656, 2655, 2497, 2528, 2771, 2488, 2571, 2709, 2945, 2996, 3170, 3756, 3642, 3651, 3999, 4207, 4578, 4615, 4691, 4832, 4710, 4400, 4309, 4054, 3953, 3958, 3998, 3903, 4408, 4962, 5184, 5162, 5017, 4367, 4757, 4612, 4902, 5204, 5525, 5717, 5841, 5839, 5835, 6057, 5755, 5349, 5582, 5692, 5111, 5816, 6145, 6331, 6149, 5203, 5345, 5162, 5127, 4597, 3992, 4349, 3660, 3247, 3437, 3413, 3198, 2493, 1903, 2257, 2213, 2522, 1970, 1628, 1523, 1202, 1061, 876, 698, 588, 373, 302, 221, 136, 99, 71, 58, 26, 44], "ageMales": [869, 916, 806, 839, 881, 930, 1003, 1068, 1136, 1257, 1316, 1305, 1227, 1408, 1386, 1363, 1332, 1300, 1406, 1359, 1365, 1426, 1533, 1600, 1661, 1983, 1894, 1916, 2046, 2146, 2361, 2393, 2482, 2547, 2574, 2400, 2353, 2219, 2101, 2132, 2145, 2062, 2315, 2521, 2630, 2627, 2523, 2213, 2389, 2324, 2512, 2608, 2714, 2907, 2862, 2876, 2821, 2955, 2739, 2602, 2647, 2711, 2430, 2763, 2818, 2912, 2763, 2440, 2505, 2364, 2241, 2053, 1748, 1969, 1607, 1431, 1499, 1441, 1374, 1034, 815, 911, 821, 990, 735, 584, 524, 408, 338, 268, 220, 165, 84, 77, 48, 30, 15, 10, 12, 2, 7], "ageFemales": [848, 801, 754, 809, 831, 890, 917, 1024, 1084, 1227, 1278, 1239, 1217, 1318, 1270, 1292, 1165, 1228, 1365, 1129, 1206, 1283, 1412, 1396, 1509, 1773, 1748, 1735, 1953, 2061, 2217, 2222, 2209, 2285, 2136, 2000, 1956, 1835, 1852, 1826, 1853, 1841, 2093, 2441, 2554, 2535, 2494, 2154, 2368, 2288, 2390, 2596, 2811, 2810, 2979, 2963, 3014, 3102, 3016, 2747, 2935, 2981, 2681, 3053, 3327, 3419, 3386, 2763, 2840, 2798, 2886, 2544, 2244, 2380, 2053, 1816, 1938, 1972, 1824, 1459, 1088, 1346, 1392, 1532, 1235, 1044, 999, 794, 723, 608, 478, 423, 289, 225, 173, 106, 84, 61, 46, 24, 37]}, {"code": "2717000000", "name": "서구", "total18plus": 149476, "male18plus": 73779, "female18plus": 75697, "ages": [{"label": "18~19세", "total": 2130, "male": 1099, "female": 1031}, {"label": "20~29세", "total": 14539, "male": 7726, "female": 6813}, {"label": "30~39세", "total": 19626, "male": 10993, "female": 8633}, {"label": "40~49세", "total": 19525, "male": 10516, "female": 9009}, {"label": "50~59세", "total": 28616, "male": 14563, "female": 14053}, {"label": "60~69세", "total": 33587, "male": 16182, "female": 17405}, {"label": "70~79세", "total": 21132, "male": 9142, "female": 11990}, {"label": "80~89세", "total": 9061, "male": 3287, "female": 5774}, {"label": "90~99세", "total": 1237, "male": 270, "female": 967}, {"label": "100세 이상", "total": 23, "male": 1, "female": 22}], "ageTotals": [697, 712, 566, 611, 593, 594, 697, 694, 795, 910, 918, 914, 917, 998, 977, 1000, 884, 1034, 1102, 1028, 986, 1027, 1205, 1226, 1402, 1631, 1609, 1709, 1843, 1901, 2116, 2047, 2181, 2286, 2257, 1871, 1884, 1689, 1629, 1666, 1698, 1649, 1848, 2096, 2073, 2156, 2135, 1865, 1968, 2037, 2212, 2485, 2589, 2759, 2773, 2900, 3133, 3269, 3285, 3211, 3290, 3474, 3067, 3619, 3691, 3714, 3656, 3049, 3046, 2981, 2858, 2670, 2260, 2504, 2156, 1779, 1944, 1882, 1744, 1335, 975, 1243, 1156, 1376, 1092, 802, 782, 649, 558, 428, 347, 263, 182, 146, 100, 75, 44, 35, 22, 23, 23], "ageMales": [347, 367, 276, 332, 309, 314, 364, 355, 406, 477, 467, 469, 444, 478, 494, 494, 422, 533, 577, 522, 520, 567, 674, 644, 764, 845, 841, 917, 952, 1002, 1115, 1090, 1213, 1287, 1299, 1065, 1080, 963, 937, 944, 956, 924, 1011, 1104, 1127, 1155, 1136, 984, 1040, 1079, 1140, 1337, 1371, 1447, 1411, 1462, 1512, 1647, 1620, 1616, 1612, 1691, 1597, 1736, 1822, 1764, 1679, 1428, 1458, 1395, 1223, 1192, 1016, 1003, 953, 798, 874, 832, 710, 541, 398, 481, 428, 555, 408, 257, 252, 212, 161, 135, 103, 60, 41, 25, 13, 8, 7, 4, 7, 2, 1], "ageFemales": [350, 345, 290, 279, 284, 280, 333, 339, 389, 433, 451, 445, 473, 520, 483, 506, 462, 501, 525, 506, 466, 460, 531, 582, 638, 786, 768, 792, 891, 899, 1001, 957, 968, 999, 958, 806, 804, 726, 692, 722, 742, 725, 837, 992, 946, 1001, 999, 881, 928, 958, 1072, 1148, 1218, 1312, 1362, 1438, 1621, 1622, 1665, 1595, 1678, 1783, 1470, 1883, 1869, 1950, 1977, 1621, 1588, 1586, 1635, 1478, 1244, 1501, 1203, 981, 1070, 1050, 1034, 794, 577, 762, 728, 821, 684, 545, 530, 437, 397, 293, 244, 203, 141, 121, 87, 67, 37, 31, 15, 21, 22]}, {"code": "2720000000", "name": "남구", "total18plus": 126188, "male18plus": 59620, "female18plus": 66568, "ages": [{"label": "18~19세", "total": 2074, "male": 1022, "female": 1052}, {"label": "20~29세", "total": 16048, "male": 7663, "female": 8385}, {"label": "30~39세", "total": 17177, "male": 9253, "female": 7924}, {"label": "40~49세", "total": 16882, "male": 8523, "female": 8359}, {"label": "50~59세", "total": 22827, "male": 11325, "female": 11502}, {"label": "60~69세", "total": 23863, "male": 10969, "female": 12894}, {"label": "70~79세", "total": 17234, "male": 7370, "female": 9864}, {"label": "80~89세", "total": 8589, "male": 3105, "female": 5484}, {"label": "90~99세", "total": 1465, "male": 386, "female": 1079}, {"label": "100세 이상", "total": 29, "male": 4, "female": 25}], "ageTotals": [554, 539, 479, 454, 493, 518, 514, 532, 582, 677, 706, 690, 737, 809, 827, 831, 755, 861, 984, 1090, 1143, 1295, 1424, 1439, 1540, 1839, 1757, 1797, 1848, 1966, 2051, 1931, 1912, 1942, 1805, 1698, 1570, 1483, 1414, 1371, 1436, 1372, 1655, 1766, 1863, 1829, 1799, 1659, 1723, 1780, 1828, 2081, 2137, 2407, 2395, 2484, 2386, 2465, 2454, 2190, 2258, 2297, 2098, 2545, 2528, 2654, 2612, 2285, 2393, 2193, 2303, 2124, 1791, 1934, 1675, 1476, 1532, 1675, 1482, 1242, 897, 1048, 1049, 1285, 1031, 846, 794, 638, 550, 451, 402, 324, 199, 168, 134, 80, 68, 50, 31, 9, 29], "ageMales": [273, 280, 248, 228, 278, 266, 273, 296, 284, 346, 355, 350, 386, 404, 432, 439, 373, 447, 472, 550, 536, 616, 699, 702, 740, 854, 825, 826, 889, 976, 1064, 1014, 993, 1007, 961, 934, 891, 849, 771, 769, 753, 735, 852, 865, 943, 919, 913, 821, 838, 884, 878, 1029, 1070, 1221, 1163, 1220, 1202, 1228, 1201, 1113, 1058, 1068, 992, 1221, 1171, 1194, 1177, 1027, 1111, 950, 1029, 940, 776, 820, 721, 637, 663, 690, 597, 497, 318, 413, 383, 505, 384, 284, 269, 222, 174, 153, 110, 103, 54, 49, 31, 16, 10, 7, 5, 1, 4], "ageFemales": [281, 259, 231, 226, 215, 252, 241, 236, 298, 331, 351, 340, 351, 405, 395, 392, 382, 414, 512, 540, 607, 679, 725, 737, 800, 985, 932, 971, 959, 990, 987, 917, 919, 935, 844, 764, 679, 634, 643, 602, 683, 637, 803, 901, 920, 910, 886, 838, 885, 896, 950, 1052, 1067, 1186, 1232, 1264, 1184, 1237, 1253, 1077, 1200, 1229, 1106, 1324, 1357, 1460, 1435, 1258, 1282, 1243, 1274, 1184, 1015, 1114, 954, 839, 869, 985, 885, 745, 579, 635, 666, 780, 647, 562, 525, 416, 376, 298, 292, 221, 145, 119, 103, 64, 58, 43, 26, 8, 25]}, {"code": "2723000000", "name": "북구", "total18plus": 357702, "male18plus": 175991, "female18plus": 181711, "ages": [{"label": "18~19세", "total": 8441, "male": 4342, "female": 4099}, {"label": "20~29세", "total": 50087, "male": 26816, "female": 23271}, {"label": "30~39세", "total": 47975, "male": 25932, "female": 22043}, {"label": "40~49세", "total": 56430, "male": 28221, "female": 28209}, {"label": "50~59세", "total": 76409, "male": 37404, "female": 39005}, {"label": "60~69세", "total": 64686, "male": 31419, "female": 33267}, {"label": "70~79세", "total": 35233, "male": 15546, "female": 19687}, {"label": "80~89세", "total": 15993, "male": 5732, "female": 10261}, {"label": "90~99세", "total": 2399, "male": 572, "female": 1827}, {"label": "100세 이상", "total": 49, "male": 7, "female": 42}], "ageTotals": [1790, 1781, 1589, 1787, 1918, 1988, 2230, 2535, 2749, 3226, 3510, 3474, 3473, 3846, 3794, 3800, 3537, 3752, 4267, 4174, 4274, 4597, 5124, 4768, 5231, 5748, 5255, 4892, 5135, 5063, 5348, 5178, 5066, 5103, 5077, 4511, 4691, 4274, 4327, 4400, 4514, 4479, 5089, 5820, 6184, 6178, 6314, 5531, 6118, 6203, 6552, 7378, 7758, 7917, 8027, 7965, 7936, 8160, 7494, 7222, 7021, 6802, 6247, 7135, 7270, 7154, 6712, 5703, 5493, 5149, 4881, 4447, 3764, 4044, 3468, 2993, 3200, 3211, 2911, 2314, 1669, 2096, 2053, 2432, 1866, 1536, 1487, 1130, 929, 795, 636, 493, 380, 289, 214, 137, 101, 76, 44, 29, 49], "ageMales": [913, 914, 837, 897, 993, 1014, 1158, 1323, 1365, 1635, 1826, 1779, 1746, 1977, 2012, 1914, 1795, 1881, 2215, 2127, 2067, 2310, 2712, 2649, 2932, 3156, 2871, 2693, 2701, 2725, 2835, 2866, 2737, 2802, 2711, 2438, 2563, 2320, 2347, 2313, 2385, 2415, 2538, 2871, 3042, 3046, 3148, 2747, 2942, 3087, 3156, 3554, 3695, 3851, 3978, 3911, 3888, 4065, 3670, 3636, 3370, 3318, 2992, 3551, 3529, 3426, 3248, 2796, 2766, 2423, 2221, 2069, 1700, 1787, 1585, 1285, 1427, 1331, 1177, 964, 674, 790, 735, 984, 649, 515, 488, 379, 297, 221, 184, 131, 90, 64, 48, 21, 13, 12, 5, 4, 7], "ageFemales": [877, 867, 752, 890, 925, 974, 1072, 1212, 1384, 1591, 1684, 1695, 1727, 1869, 1782, 1886, 1742, 1871, 2052, 2047, 2207, 2287, 2412, 2119, 2299, 2592, 2384, 2199, 2434, 2338, 2513, 2312, 2329, 2301, 2366, 2073, 2128, 1954, 1980, 2087, 2129, 2064, 2551, 2949, 3142, 3132, 3166, 2784, 3176, 3116, 3396, 3824, 4063, 4066, 4049, 4054, 4048, 4095, 3824, 3586, 3651, 3484, 3255, 3584, 3741, 3728, 3464, 2907, 2727, 2726, 2660, 2378, 2064, 2257, 1883, 1708, 1773, 1880, 1734, 1350, 995, 1306, 1318, 1448, 1217, 1021, 999, 751, 632, 574, 452, 362, 290, 225, 166, 116, 88, 64, 39, 25, 42]}, {"code": "2726000000", "name": "수성구", "total18plus": 346742, "male18plus": 164179, "female18plus": 182563, "ages": [{"label": "18~19세", "total": 9272, "male": 4839, "female": 4433}, {"label": "20~29세", "total": 42358, "male": 22473, "female": 19885}, {"label": "30~39세", "total": 42597, "male": 21495, "female": 21102}, {"label": "40~49세", "total": 63083, "male": 29471, "female": 33612}, {"label": "50~59세", "total": 74147, "male": 34838, "female": 39309}, {"label": "60~69세", "total": 59523, "male": 28018, "female": 31505}, {"label": "70~79세", "total": 35860, "male": 15755, "female": 20105}, {"label": "80~89세", "total": 16845, "male": 6425, "female": 10420}, {"label": "90~99세", "total": 3005, "male": 858, "female": 2147}, {"label": "100세 이상", "total": 52, "male": 7, "female": 45}], "ageTotals": [1483, 1584, 1509, 1878, 2116, 2222, 2850, 3252, 3572, 4132, 4497, 4630, 4715, 5242, 4890, 4762, 4470, 4751, 4998, 4274, 4005, 3949, 4227, 3914, 4313, 4776, 4468, 4149, 4289, 4268, 4349, 4190, 4304, 4337, 4296, 4022, 4240, 4096, 4269, 4494, 4737, 4896, 5869, 6511, 7013, 7145, 7208, 6417, 6572, 6715, 7010, 7135, 7561, 7611, 7899, 7945, 7735, 7582, 7228, 6441, 6407, 6507, 5809, 6308, 6186, 6433, 6131, 5325, 5267, 5150, 4909, 4330, 3962, 4188, 3349, 3220, 3190, 3226, 3034, 2452, 1782, 2099, 2169, 2392, 1951, 1618, 1526, 1276, 1096, 936, 829, 615, 454, 370, 250, 166, 135, 76, 60, 50, 52], "ageMales": [746, 780, 753, 975, 1092, 1138, 1489, 1694, 1877, 2122, 2341, 2356, 2443, 2729, 2496, 2481, 2341, 2505, 2543, 2296, 2176, 2144, 2276, 2085, 2308, 2576, 2433, 2180, 2152, 2143, 2268, 2170, 2213, 2284, 2184, 1993, 2085, 2040, 2078, 2180, 2331, 2286, 2699, 2955, 3227, 3251, 3391, 3054, 3081, 3196, 3249, 3268, 3500, 3522, 3725, 3675, 3649, 3678, 3449, 3123, 3057, 3094, 2754, 3000, 2953, 3048, 2832, 2510, 2371, 2399, 2244, 2030, 1741, 1841, 1449, 1379, 1391, 1340, 1315, 1025, 752, 863, 841, 966, 741, 576, 545, 469, 358, 314, 268, 177, 137, 106, 65, 36, 31, 15, 13, 10, 7], "ageFemales": [737, 804, 756, 903, 1024, 1084, 1361, 1558, 1695, 2010, 2156, 2274, 2272, 2513, 2394, 2281, 2129, 2246, 2455, 1978, 1829, 1805, 1951, 1829, 2005, 2200, 2035, 1969, 2137, 2125, 2081, 2020, 2091, 2053, 2112, 2029, 2155, 2056, 2191, 2314, 2406, 2610, 3170, 3556, 3786, 3894, 3817, 3363, 3491, 3519, 3761, 3867, 4061, 4089, 4174, 4270, 4086, 3904, 3779, 3318, 3350, 3413, 3055, 3308, 3233, 3385, 3299, 2815, 2896, 2751, 2665, 2300, 2221, 2347, 1900, 1841, 1799, 1886, 1719, 1427, 1030, 1236, 1328, 1426, 1210, 1042, 981, 807, 738, 622, 561, 438, 317, 264, 185, 130, 104, 61, 47, 40, 45]}, {"code": "2729000000", "name": "달서구", "total18plus": 450631, "male18plus": 218982, "female18plus": 231649, "ages": [{"label": "18~19세", "total": 10479, "male": 5228, "female": 5251}, {"label": "20~29세", "total": 58042, "male": 30442, "female": 27600}, {"label": "30~39세", "total": 60979, "male": 32866, "female": 28113}, {"label": "40~49세", "total": 71859, "male": 35430, "female": 36429}, {"label": "50~59세", "total": 94561, "male": 45241, "female": 49320}, {"label": "60~69세", "total": 86808, "male": 41371, "female": 45437}, {"label": "70~79세", "total": 46232, "male": 20814, "female": 25418}, {"label": "80~89세", "total": 18726, "male": 6880, "female": 11846}, {"label": "90~99세", "total": 2896, "male": 697, "female": 2199}, {"label": "100세 이상", "total": 49, "male": 13, "female": 36}], "ageTotals": [2175, 2192, 1991, 2170, 2315, 2482, 2928, 3100, 3580, 4160, 4560, 4594, 4442, 5012, 4912, 5132, 4741, 4902, 5490, 4989, 4958, 5247, 5500, 5268, 5680, 6391, 6196, 5957, 6456, 6389, 6690, 6534, 6496, 6729, 6289, 5797, 5782, 5602, 5598, 5462, 5671, 5666, 6577, 7508, 7824, 7836, 8054, 7254, 7654, 7815, 7982, 8665, 9421, 9324, 9927, 9821, 10045, 10382, 9759, 9235, 9321, 9211, 8430, 9404, 9831, 9612, 9252, 7429, 7368, 6950, 6679, 6012, 5078, 5666, 4378, 3956, 3961, 3962, 3610, 2930, 2015, 2352, 2315, 2804, 2183, 1766, 1690, 1425, 1189, 987, 813, 609, 417, 357, 253, 160, 133, 83, 42, 29, 49], "ageMales": [1136, 1114, 1030, 1090, 1216, 1272, 1517, 1562, 1870, 2167, 2304, 2360, 2208, 2526, 2487, 2659, 2434, 2567, 2734, 2494, 2495, 2739, 2853, 2726, 3042, 3371, 3342, 3174, 3420, 3280, 3526, 3555, 3490, 3616, 3456, 3229, 3140, 3003, 2958, 2893, 2953, 2877, 3306, 3725, 3731, 3881, 3826, 3563, 3720, 3848, 3857, 4216, 4425, 4464, 4779, 4684, 4825, 4924, 4592, 4475, 4359, 4398, 4070, 4518, 4718, 4509, 4310, 3603, 3514, 3372, 3042, 2863, 2303, 2453, 2002, 1804, 1760, 1739, 1549, 1299, 866, 944, 879, 1087, 795, 630, 558, 479, 368, 274, 214, 165, 99, 81, 62, 28, 26, 13, 4, 5, 13], "ageFemales": [1039, 1078, 961, 1080, 1099, 1210, 1411, 1538, 1710, 1993, 2256, 2234, 2234, 2486, 2425, 2473, 2307, 2335, 2756, 2495, 2463, 2508, 2647, 2542, 2638, 3020, 2854, 2783, 3036, 3109, 3164, 2979, 3006, 3113, 2833, 2568, 2642, 2599, 2640, 2569, 2718, 2789, 3271, 3783, 4093, 3955, 4228, 3691, 3934, 3967, 4125, 4449, 4996, 4860, 5148, 5137, 5220, 5458, 5167, 4760, 4962, 4813, 4360, 4886, 5113, 5103, 4942, 3826, 3854, 3578, 3637, 3149, 2775, 3213, 2376, 2152, 2201, 2223, 2061, 1631, 1149, 1408, 1436, 1717, 1388, 1136, 1132, 946, 821, 713, 599, 444, 318, 276, 191, 132, 107, 70, 38, 24, 36]}, {"code": "2771000000", "name": "달성군", "total18plus": 210863, "male18plus": 106738, "female18plus": 104125, "ages": [{"label": "18~19세", "total": 4542, "male": 2366, "female": 2176}, {"label": "20~29세", "total": 21975, "male": 12345, "female": 9630}, {"label": "30~39세", "total": 32731, "male": 17617, "female": 15114}, {"label": "40~49세", "total": 43564, "male": 22508, "female": 21056}, {"label": "50~59세", "total": 41444, "male": 20934, "female": 20510}, {"label": "60~69세", "total": 37896, "male": 18722, "female": 19174}, {"label": "70~79세", "total": 19617, "male": 9200, "female": 10417}, {"label": "80~89세", "total": 7764, "male": 2772, "female": 4992}, {"label": "90~99세", "total": 1305, "male": 270, "female": 1035}, {"label": "100세 이상", "total": 25, "male": 4, "female": 21}], "ageTotals": [1409, 1501, 1519, 1643, 1878, 1945, 2328, 2394, 2638, 2902, 3011, 2978, 2791, 3076, 2948, 2835, 2389, 2482, 2500, 2042, 1929, 1875, 1925, 1787, 2092, 2341, 2305, 2388, 2635, 2698, 2828, 2970, 3086, 3355, 3380, 3168, 3497, 3413, 3447, 3587, 3800, 3803, 4260, 4771, 5048, 4838, 4822, 4096, 4151, 3975, 3969, 4147, 4137, 4139, 4246, 4215, 4125, 4346, 4060, 4060, 3999, 3934, 3620, 4167, 4332, 4237, 3945, 3305, 3287, 3070, 2910, 2493, 2072, 2389, 1908, 1731, 1761, 1669, 1523, 1161, 910, 963, 935, 1120, 894, 760, 653, 611, 497, 421, 305, 282, 200, 166, 127, 87, 64, 33, 26, 15, 25], "ageMales": [754, 739, 767, 841, 919, 997, 1193, 1209, 1326, 1481, 1507, 1523, 1438, 1607, 1480, 1452, 1218, 1307, 1264, 1102, 1091, 1031, 1048, 1005, 1167, 1296, 1332, 1395, 1476, 1504, 1588, 1637, 1668, 1799, 1762, 1687, 1906, 1825, 1835, 1910, 1987, 2034, 2155, 2338, 2631, 2461, 2484, 2114, 2172, 2132, 2090, 2158, 2142, 2148, 2172, 2147, 1982, 2109, 1949, 2037, 1964, 1953, 1796, 2053, 2160, 2100, 1863, 1634, 1630, 1569, 1338, 1255, 961, 1115, 900, 825, 835, 781, 693, 497, 401, 415, 351, 429, 298, 238, 187, 179, 148, 126, 79, 61, 33, 41, 23, 12, 10, 7, 3, 1, 4], "ageFemales": [655, 762, 752, 802, 959, 948, 1135, 1185, 1312, 1421, 1504, 1455, 1353, 1469, 1468, 1383, 1171, 1175, 1236, 940, 838, 844, 877, 782, 925, 1045, 973, 993, 1159, 1194, 1240, 1333, 1418, 1556, 1618, 1481, 1591, 1588, 1612, 1677, 1813, 1769, 2105, 2433, 2417, 2377, 2338, 1982, 1979, 1843, 1879, 1989, 1995, 1991, 2074, 2068, 2143, 2237, 2111, 2023, 2035, 1981, 1824, 2114, 2172, 2137, 2082, 1671, 1657, 1501, 1572, 1238, 1111, 1274, 1008, 906, 926, 888, 830, 664, 509, 548, 584, 691, 596, 522, 466, 432, 349, 295, 226, 221, 167, 125, 104, 75, 54, 26, 23, 14, 21]}, {"code": "2772000000", "name": "군위군", "total18plus": 21507, "male18plus": 11170, "female18plus": 10337, "ages": [{"label": "18~19세", "total": 191, "male": 106, "female": 85}, {"label": "20~29세", "total": 924, "male": 544, "female": 380}, {"label": "30~39세", "total": 1138, "male": 684, "female": 454}, {"label": "40~49세", "total": 1635, "male": 932, "female": 703}, {"label": "50~59세", "total": 3519, "male": 2013, "female": 1506}, {"label": "60~69세", "total": 6307, "male": 3489, "female": 2818}, {"label": "70~79세", "total": 4564, "male": 2298, "female": 2266}, {"label": "80~89세", "total": 2682, "male": 979, "female": 1703}, {"label": "90~99세", "total": 543, "male": 125, "female": 418}, {"label": "100세 이상", "total": 4, "male": 0, "female": 4}], "ageTotals": [45, 53, 32, 49, 33, 39, 58, 36, 49, 47, 49, 67, 68, 80, 87, 89, 79, 100, 105, 86, 84, 78, 78, 83, 78, 96, 100, 109, 107, 111, 117, 133, 117, 115, 110, 105, 96, 92, 122, 131, 137, 113, 132, 147, 167, 176, 183, 182, 189, 209, 219, 241, 260, 310, 330, 339, 406, 452, 454, 508, 589, 583, 473, 660, 683, 707, 725, 616, 624, 647, 615, 520, 470, 509, 490, 390, 418, 414, 397, 341, 212, 294, 309, 396, 331, 266, 255, 228, 215, 176, 153, 120, 83, 55, 50, 37, 17, 10, 13, 5, 4], "ageMales": [18, 30, 13, 36, 21, 20, 33, 23, 31, 29, 24, 34, 45, 45, 47, 43, 47, 53, 60, 46, 52, 45, 46, 44, 52, 62, 64, 64, 53, 62, 72, 82, 65, 79, 66, 63, 54, 51, 75, 77, 73, 69, 76, 79, 84, 98, 104, 118, 108, 123, 124, 143, 157, 168, 190, 184, 234, 245, 261, 307, 332, 334, 250, 365, 382, 389, 383, 341, 340, 373, 330, 283, 237, 252, 240, 188, 225, 202, 189, 152, 96, 120, 112, 172, 113, 90, 83, 71, 67, 55, 37, 29, 19, 12, 7, 9, 6, 2, 3, 1, 0], "ageFemales": [27, 23, 19, 13, 12, 19, 25, 13, 18, 18, 25, 33, 23, 35, 40, 46, 32, 47, 45, 40, 32, 33, 32, 39, 26, 34, 36, 45, 54, 49, 45, 51, 52, 36, 44, 42, 42, 41, 47, 54, 64, 44, 56, 68, 83, 78, 79, 64, 81, 86, 95, 98, 103, 142, 140, 155, 172, 207, 193, 201, 257, 249, 223, 295, 301, 318, 342, 275, 284, 274, 285, 237, 233, 257, 250, 202, 193, 212, 208, 189, 116, 174, 197, 224, 218, 176, 172, 157, 148, 121, 116, 91, 64, 43, 43, 28, 11, 8, 10, 4, 4]}];
+
+    const fmt = (n) => new Intl.NumberFormat('ko-KR').format(n);
+    const pct = (value, total) => total ? ((value / total) * 100).toFixed(2) : '0.00';
+    const heroStat = (label, primary, secondary) => `
+      <div class="stat-box">
+        <span>${label}</span>
+        <strong>${primary}</strong>
+        <small>${secondary}</small>
+      </div>
+    `;
+    const combinedCell = (percentValue, countValue) => `
+      <span class="cell-primary">${percentValue}%</span>
+      <span class="cell-secondary">${fmt(countValue)}명</span>
+    `;
+
+    function bucketRows(item) {
+      const totalMalePct = pct(item.male18plus, item.total18plus);
+      const totalFemalePct = pct(item.female18plus, item.total18plus);
+
+      const totalRow = `
+        <tr class="total-row">
+          <th scope="row">${item.name}</th>
+          <td>${combinedCell('100.00', item.total18plus)}</td>
+          <td>${combinedCell(totalMalePct, item.male18plus)}</td>
+          <td>${combinedCell(totalFemalePct, item.female18plus)}</td>
+        </tr>
+      `;
+
+      const ageRows = item.ages.map(age => `
+        <tr>
+          <th scope="row">${age.label}</th>
+          <td>${combinedCell(pct(age.total, item.total18plus), age.total)}</td>
+          <td>${combinedCell(pct(age.male, item.total18plus), age.male)}</td>
+          <td>${combinedCell(pct(age.female, item.total18plus), age.female)}</td>
+        </tr>
+      `).join('');
+
+      return `
+        <table>
+          <colgroup>
+            <col /><col /><col /><col />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>총</th>
+              <th>남</th>
+              <th>여</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${totalRow}
+            ${ageRows}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function buildHero() {
+      const daegu = populationData[0];
+      const malePct = pct(daegu.male18plus, daegu.total18plus);
+      const femalePct = pct(daegu.female18plus, daegu.total18plus);
+
+      let html = '';
+      html += heroStat('대구광역시 18세 이상 총인구', '100.00%', fmt(daegu.total18plus) + '명');
+      html += heroStat('남성', malePct + '%', fmt(daegu.male18plus) + '명');
+      html += heroStat('여성', femalePct + '%', fmt(daegu.female18plus) + '명');
+      document.getElementById('heroStats').innerHTML = html;
+    }
+
+    function buildQuickNav() {
+      document.getElementById('quickNav').innerHTML = populationData.map((item, index) => `
+        <a class="nav-pill" href="#sec-${index}">${item.name}</a>
+      `).join('');
+    }
+
+    function buildSections() {
+      const html = populationData.map((item, index) => {
+        const malePct = pct(item.male18plus, item.total18plus);
+        const femalePct = pct(item.female18plus, item.total18plus);
+
+        return `
+          <section class="district-card" id="sec-${index}">
+            <div class="district-head">
+              <div>
+                <p class="eyebrow">DAEGU POPULATION</p>
+                <h2>${item.name}</h2>
+                <p class="muted">18세 이상 · 거주불명자 및 재외국민 포함 기준</p>
+                <div class="district-actions">
+                  <button class="btn" type="button" data-open-search="${item.code}">커스텀 검색하기</button>
+                </div>
+              </div>
+              <div class="kpi-wrap">
+                <div class="kpi">
+                  <span class="kpi-label">총</span>
+                  <strong>100.00%</strong>
+                  <small>${fmt(item.total18plus)}명</small>
+                </div>
+                <div class="kpi">
+                  <span class="kpi-label">남</span>
+                  <strong>${malePct}%</strong>
+                  <small>${fmt(item.male18plus)}명</small>
+                </div>
+                <div class="kpi">
+                  <span class="kpi-label">여</span>
+                  <strong>${femalePct}%</strong>
+                  <small>${fmt(item.female18plus)}명</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="ratio-bar" aria-hidden="true">
+              <span class="ratio-male" style="width:${malePct}%"></span>
+              <span class="ratio-female" style="width:${femalePct}%"></span>
+            </div>
+            <div class="ratio-caption">
+              <span>남성 ${malePct}% · ${fmt(item.male18plus)}명</span>
+              <span>여성 ${femalePct}% · ${fmt(item.female18plus)}명</span>
+            </div>
+
+            <div class="table-shell">
+              ${bucketRows(item)}
+            </div>
+
+            <div class="legend">모든 숫자와 퍼센트는 각 시군구의 18세 이상 인구 총계를 100% 기준으로 계산했다.</div>
+          </section>
+        `;
+      }).join('');
+
+      document.getElementById('sections').innerHTML = html;
+    }
+
+    const modal = document.getElementById('searchModal');
+    const searchResult = document.getElementById('searchResult');
+    const districtPicker = document.getElementById('districtPicker');
+    const ageStart = document.getElementById('ageStart');
+    const ageEnd = document.getElementById('ageEnd');
+    let selectedCode = populationData[0].code;
+
+    function renderPicker() {
+      districtPicker.innerHTML = populationData.map(item => `
+        <button class="picker-btn ${item.code === selectedCode ? 'active' : ''}" type="button" data-code="${item.code}">
+          ${item.name}
+        </button>
+      `).join('');
+    }
+
+    function openModal(code) {
+      if (code) selectedCode = code;
+      renderPicker();
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function calcRange(item, startAge, endAge) {
+      const safeStart = Math.max(18, Math.min(100, startAge));
+      const safeEnd = Math.max(safeStart, Math.min(100, endAge));
+      const total = item.ageTotals.slice(safeStart, safeEnd + 1).reduce((a, b) => a + b, 0);
+      const male = item.ageMales.slice(safeStart, safeEnd + 1).reduce((a, b) => a + b, 0);
+      const female = item.ageFemales.slice(safeStart, safeEnd + 1).reduce((a, b) => a + b, 0);
+      return { startAge: safeStart, endAge: safeEnd, total, male, female };
+    }
+
+    function renderSearchResult(item, startAge, endAge) {
+      const result = calcRange(item, startAge, endAge);
+      const totalPct = pct(result.total, item.total18plus);
+      const malePctAll = pct(result.male, item.total18plus);
+      const femalePctAll = pct(result.female, item.total18plus);
+      const malePctWithin = pct(result.male, result.total);
+      const femalePctWithin = pct(result.female, result.total);
+      const rangeLabel = result.endAge >= 100 ? `${result.startAge}세~100세 이상` : `${result.startAge}세~${result.endAge}세`;
+
+      searchResult.classList.add('is-open');
+      searchResult.innerHTML = `
+        <div class="result-card">
+          <div class="result-title">
+            <div>
+              <h4>${item.name} · ${rangeLabel}</h4>
+              <div class="result-sub">해당 연령대 인구가 ${item.name} 18세 이상 전체에서 차지하는 비중까지 같이 표시했다.</div>
+            </div>
+            <span class="badge">커스텀 검색 결과</span>
+          </div>
+
+          <div class="search-kpis">
+            <div class="kpi">
+              <span class="kpi-label">총</span>
+              <strong>${totalPct}%</strong>
+              <small>${fmt(result.total)}명</small>
+            </div>
+            <div class="kpi">
+              <span class="kpi-label">남</span>
+              <strong>${malePctAll}%</strong>
+              <small>${fmt(result.male)}명 · 범위 내 ${malePctWithin}%</small>
+            </div>
+            <div class="kpi">
+              <span class="kpi-label">여</span>
+              <strong>${femalePctAll}%</strong>
+              <small>${fmt(result.female)}명 · 범위 내 ${femalePctWithin}%</small>
+            </div>
+          </div>
+
+          <div class="ratio-bar" aria-hidden="true">
+            <span class="ratio-male" style="width:${malePctWithin}%"></span>
+            <span class="ratio-female" style="width:${femalePctWithin}%"></span>
+          </div>
+          <div class="ratio-caption">
+            <span>범위 내 남성 비중 ${malePctWithin}% · ${fmt(result.male)}명</span>
+            <span>범위 내 여성 비중 ${femalePctWithin}% · ${fmt(result.female)}명</span>
+          </div>
+
+          <div class="table-shell">
+            <table>
+              <colgroup>
+                <col /><col /><col /><col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>구분</th>
+                  <th>총</th>
+                  <th>남</th>
+                  <th>여</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="total-row">
+                  <th scope="row">${item.name} ${rangeLabel}</th>
+                  <td>${combinedCell(totalPct, result.total)}</td>
+                  <td>${combinedCell(malePctAll, result.male)}</td>
+                  <td>${combinedCell(femalePctAll, result.female)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="legend">검색 결과의 퍼센트는 ${item.name} 18세 이상 인구 총계를 100%로 본 값이다.</div>
+        </div>
+      `;
+    }
+
+    document.getElementById('openSearchTop').addEventListener('click', () => openModal(populationData[0].code));
+    document.getElementById('closeSearch').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    districtPicker.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-code]');
+      if (!btn) return;
+      selectedCode = btn.dataset.code;
+      renderPicker();
+    });
+
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-open-search]');
+      if (!trigger) return;
+      openModal(trigger.dataset.openSearch);
+    });
+
+    document.getElementById('runSearch').addEventListener('click', () => {
+      const start = Number(ageStart.value);
+      const end = Number(ageEnd.value);
+
+      if (!Number.isFinite(start) || !Number.isFinite(end)) {
+        alert('검색할 연령대를 정확히 입력해줘.');
+        return;
+      }
+      if (start < 18) {
+        alert('최소 시작 나이는 18세부터 가능해.');
+        return;
+      }
+      if (end < start) {
+        alert('끝 나이는 시작 나이보다 같거나 커야 해.');
+        return;
+      }
+
+      const item = populationData.find(d => d.code === selectedCode) || populationData[0];
+      renderSearchResult(item, start, end);
+    });
+
+    buildHero();
+    buildQuickNav();
+    buildSections();
+    renderPicker();
+  </script>
+</body>
+</html>
