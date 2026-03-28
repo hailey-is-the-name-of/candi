@@ -473,7 +473,7 @@
     <div class="sections" id="sections"></div>
 
     <p class="footer-note">
-      기준 파일: 인구.xlsx · 20세 이상 기준 집계
+      집계기준 : 2026년 2월 기준 대구시 거주하는 거주자 기준입니다. 거주불명자와 재외국민을 포함한 자료를 보시려면 <a href=http://bluenew.life/candi/popuall.html>여기를 클릭</a>해주세요
     </p>
 
   </main>
@@ -580,7 +580,7 @@
         const kpiFemaleSecondary = fmt(item.female20plus) + '명';
 
         const tableHtml = combinedTableRows(item);
-        const legend = '모든 퍼센트는 각 시군구의 20세 이상 총인구를 100% 기준으로 계산했고, 숫자는 실제 인원 수입니다.';
+        const legend = '모든 숫자/퍼센트는 각 시군구의 20세 이상 총인구를 100% 기준으로 계산하였습니다.';
 
         return `
           <section class="district-card" id="sec-${index}">
